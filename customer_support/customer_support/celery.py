@@ -30,5 +30,4 @@ app.autodiscover_tasks()
 
 from customer_support.events.consumers import (
     handle_customer_event,
-    handle_order_event,
 )  # noqa

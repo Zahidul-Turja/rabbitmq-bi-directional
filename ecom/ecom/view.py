@@ -5,7 +5,7 @@ from .events.publishers import event_publisher
 def trigger(request):
     event_type = "customer.created"
     event_publisher.publish(
-        task_name="handle_customer_event",  # The Celery task name
+        task_name="handle_customer_event",
         routing_key=event_type,
         payload={"from": "E-Commerce"},
         headers={"source": "ecom", "version": "1.0"},

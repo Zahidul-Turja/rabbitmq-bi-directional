@@ -9,15 +9,15 @@ app = Celery("ecom")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
 # Define exchanges
-ticket_exchange = Exchange("ticket_events", type="topic", durable=True)
+product_exchange = Exchange("product_events", type="topic", durable=True)
 complaint_exchange = Exchange("complaint_events", type="topic", durable=True)
 
 # Define queues that ecom consumes from
 app.conf.task_queues = (
     Queue(
-        "ecom_ticket_queue",
-        ticket_exchange,
-        routing_key="ticket.*",
+        "ecom_product_queue",
+        product_exchange,
+        routing_key="product.*",
         durable=True,
     ),
     Queue(
@@ -35,4 +35,4 @@ app.conf.task_ignore_result = False
 
 app.autodiscover_tasks()
 
-from ecom.events.consumers import handle_complaint_event, handle_ticket_event
+from ecom.events.consumers import handle_product_event

@@ -48,8 +48,8 @@ class EventPublisher:
 
     def _get_queue_for_routing_key(self, routing_key):
         """Map routing keys to queues"""
-        if routing_key.startswith("ticket."):
-            return "ecom_ticket_queue"
+        if routing_key.startswith("product."):
+            return "ecom_product_queue"
         elif routing_key.startswith("complaint."):
             return "ecom_complaint_queue"
         return "default"

@@ -22,14 +22,14 @@ def handle_customer_event(self, event_type=None, data=None, headers=None, **kwar
         raise
 
 
-@shared_task(name="handle_order_event", bind=True)
-def handle_order_event(self, event_type=None, data=None, headers=None, **kwargs):
-    """Handle order events from ecom service"""
-    try:
-        logger.info(f"Received order event: {event_type}")
-        print(f"ORDER EVENT: {event_type}")
+# @shared_task(name="handle_order_event", bind=True)
+# def handle_order_event(self, event_type=None, data=None, headers=None, **kwargs):
+#     """Handle order events from ecom service"""
+#     try:
+#         logger.info(f"Received order event: {event_type}")
+#         print(f"ORDER EVENT: {event_type}")
 
-        return {"status": "processed", "event_type": event_type}
-    except Exception as e:
-        logger.error(f"Error processing order event: {str(e)}")
-        raise
+#         return {"status": "processed", "event_type": event_type}
+#     except Exception as e:
+#         logger.error(f"Error processing order event: {str(e)}")
+#         raise
