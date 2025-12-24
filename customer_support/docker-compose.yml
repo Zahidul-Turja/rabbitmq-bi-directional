@@ -1,0 +1,45 @@
+services:
+  customer_support:
+    container_name: customer_support_web
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    environment:
+      - CELERY_BROKER_URL=amqp://admin:secure_password_here@shared_rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://shared_redis:6379/0
+      - REDIS_URL=redis://shared_redis:6379/2
+    networks:
+      - microservices_network
+    command: >
+      bash -c "python manage.py runserver 0.0.0.0:8001"
+
+  celery_worker:
+    container_name: customer_support_worker
+    build: .
+    command: celery -A customer_support worker -l info
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=amqp://admin:secure_password_here@shared_rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://shared_redis:6379/0
+    networks:
+      - microservices_network
+
+networks:
+  microservices_network:
+    name: microservices_network
+    external: true
+
+  # event_consumer:
+  #   container_name: customer_support_event_consumer
+  #   build: .
+  #   command: python manage.py consume_events
+  #   volumes:
+  #     - .:/app
+  #   environment:
+  #     - CELERY_BROKER_URL=amqp://admin:secure_password_here@shared_rabbitmq:5672//
+  #   networks:
+  #     - microservices_network
+  #   restart: unless-stopped

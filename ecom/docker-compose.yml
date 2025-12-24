@@ -1,0 +1,65 @@
+services:
+  web:
+    container_name: rabbit-ecom-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rabbit-ecom:latest
+    volumes:
+      - .:/app
+      - ./static:/app/static
+      - ./media:/app/media
+    environment:
+      - DEBUG=true
+    command: >
+      bash -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    networks:
+      - microservices_network
+
+  worker: &worker
+    container_name: rabbit-ecom-worker
+    image: rabbit-ecom:latest
+    volumes:
+      - .:/app
+      - ./static:/app/static
+      - ./media:/app/media
+    depends_on:
+      - redis
+      - web
+    environment:
+      - DEBUG=true
+    command: celery -A ecom worker -l info
+    networks:
+      - microservices_network
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: shared_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=secure_password_here
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: shared_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - microservices_network
+
+networks:
+  microservices_network:
+    name: microservices_network
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
